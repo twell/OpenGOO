@@ -1,3 +1,6 @@
+OpengooDebugSenderTool - OpenGooDst
+======
+
 The english version will be available soon!
 
  * [Introduzione](#introduzione)
@@ -7,9 +10,9 @@ The english version will be available soon!
 ##Introduzione 
 OpenGooDst è un modulo di OpenGoo che permette di inviare al momento del crash del gioco un report formato dal backtrace + debug output e una breve descrizione dell'utente su quanto svolgeva al momento del crash.
 
-OpenGooDst è separato da OpenGoo ed è formato da un wizard di invio report e un piccolo manager, in grado di visualizzare tutti i report, inviati e non inviati. E' inoltre possibile inviare dal manager eventuali report non inviati e di avere un [feedback di risoluzione](#feedback di risoluzione) di un particolare bug.
+OpenGooDst è separato da OpenGoo ed è formato da un wizard di invio report e un piccolo manager, in grado di visualizzare tutti i report, inviati e non inviati. E' inoltre possibile inviare dal manager eventuali report non inviati e di avere un [feedback di risoluzione](#feedback) di un particolare bug.
 
-OpenGoo, al momento del crash, memorizza il backtrace e il debug output nel file [debug.xml](#debug), generando un identificatore univoco “Uuid” legato al report. Successivamente esegue OpenGooDst passandogli l'uuid come argomento.
+OpenGoo, al momento del crash, memorizza il backtrace e il debug output nel file [debug.xml](#debugFile), generando un identificatore univoco “Uuid” legato al report. Successivamente esegue OpenGooDst passandogli l'uuid come argomento.
 
 Il modulo di OpenGoo che apre il file di debug.xml e memorizza il report è sul branch denominato: “XML-Module”. Non appena concluso sarà inglobato nel gioco.
 
@@ -28,7 +31,7 @@ All'avvio OpenGooDst valuta i parametri per determinare in che modalità avviars
 
 In avvio in modalità wizard, OpenGooDst apre il file debug.xml in cerca del report identificato dall'uuid passato come argomento, lo completa delle informazioni inserite dall'utente e lo invia.
 
-### <a id="debug"></a>
+### <a id="debugFile"></a>
 ###La struttura del file xml:
 
 
@@ -117,7 +120,7 @@ Il formato del report inviato è generato da OpenGooDst, sulla base delle inform
 
 Il report verrà uplodato via ftp. Attualmente non abbiamo un server per lo scopo.
 
-### <a id="feedback di risoluzione"></a>
+### <a id="feedback"></a>
 ###Feedback di risoluzione:
 (Funzionalità attualmente non implementata)  
 Il report viene generato ogni volta con un uuid univoco universalmente o con poche probabilità di duplicato.
