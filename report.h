@@ -22,17 +22,17 @@ private:
     QString userText;
     QString gameVerFix;
 
-    bool sended;
+    bool sent;
     bool fixed;
 
 public:
-    Report(Architecture *arch, QUuid uuid, QDateTime dateTime, QString debugText, QString userText, bool sended, QDateTime sendDate, bool fixed, QString gameVerFix);
+    Report(Architecture *arch, QUuid uuid, QDateTime dateTime, QString debugText, QString userText, bool sent, QDateTime sendDate, bool fixed, QString gameVerFix);
 
     //Setter functions:
 
     void setUserText(QString);
     void setFixed(bool);
-    void setSended(bool);
+    void setSent(bool);
 
     //Retrive data functions:
 
@@ -48,7 +48,7 @@ public:
     QString getUserText() const;
 
     bool getFixed() const;
-    bool getSended() const;
+    bool getSent() const;
 
     QString getTextualDescription();
 };

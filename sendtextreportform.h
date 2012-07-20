@@ -36,7 +36,7 @@ private:
     ManagerGui *guiPointer;
 
 signals:
-    void reportSended(Report*);
+    void reportSent(Report*);
 
 private slots:
     void sendTextualReport();

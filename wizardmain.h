@@ -32,10 +32,10 @@ public:
     Report *getReport();
 
 signals:
-    void reportSended(Report*);
+    void reportSent(Report*);
 
 private slots:
-    void wizardReportSended(Report*);
+    void wizardReportSent(Report*);
 
 };
 

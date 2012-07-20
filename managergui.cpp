@@ -10,8 +10,8 @@ ManagerGui::ManagerGui(QWidget *parent) :
     //Tables init:
 
     //Those lines adapt the vertical headers within the content leaving users resize capabilities.
-    ui->sendedTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->unsendedTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->sentTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->notSentTable->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
     //Window init:
 
@@ -45,9 +45,9 @@ ManagerGui::~ManagerGui()
 }
 
 void ManagerGui::sendReport() {
-    //SLOT: gets the selected report from the unsended tableview and passes it to the wizard.
+    //SLOT: gets the selected report from the not sent tableview and passes it to the wizard.
 
-    QModelIndexList list = ui->unsendedTable->selectionModel()->selectedIndexes();
+    QModelIndexList list = ui->notSentTable->selectionModel()->selectedIndexes();
     QModelIndex index;
 
     if(!list.isEmpty())
@@ -55,15 +55,15 @@ void ManagerGui::sendReport() {
 
     if(index.isValid()) {
 
-        WizardMain *w = new WizardMain(model->getReport( unsendedProxy->mapToSource(index)));
-        connect(w, SIGNAL(reportSended(Report*)),this, SLOT(reportSended(Report*)));
+        WizardMain *w = new WizardMain(model->getReport( notSentProxy->mapToSource(index)));
+        connect(w, SIGNAL(reportSent(Report*)),this, SLOT(reportSent(Report*)));
 
         w->show();
 
     } else {
         QMessageBox::information(this, tr("OpenGooDST"),
                                         tr("Select one report to be sent\n"
-                                           "from the unsended ones."));
+                                           "from the not sent ones."));
     }
 }
 
@@ -71,7 +71,7 @@ void ManagerGui::sendTextualReport() {
     //Shows the textual report form.
 
     SendTextReportForm *sf = new SendTextReportForm(xml->getActualArch(), this);
-    connect(sf, SIGNAL(reportSended(Report*)),this, SLOT(reportSended(Report*)));
+    connect(sf, SIGNAL(reportSent(Report*)),this, SLOT(reportSent(Report*)));
 
     sf->show();
 }
@@ -84,33 +84,33 @@ void ManagerGui::startUp() {
     QList<Report*> *reports = xml->getReports();    //Retrieve a pointer list to the reports.
     model = new TablesModel(reports);               //Init table model.
 
-    unsendedProxy = new CustomTableProxy(false);
-    sendedProxy = new CustomTableProxy(true);
+    notSentProxy = new CustomTableProxy(false);
+    sentProxy = new CustomTableProxy(true);
 
-    unsendedProxy->setDynamicSortFilter(true);
-    sendedProxy->setDynamicSortFilter(true);
+    notSentProxy->setDynamicSortFilter(true);
+    sentProxy->setDynamicSortFilter(true);
 
-    sendedProxy->setSourceModel(model);
-    unsendedProxy->setSourceModel(model);
+    sentProxy->setSourceModel(model);
+    notSentProxy->setSourceModel(model);
 
-    ui->unsendedTable->setModel(unsendedProxy);
-    ui->sendedTable->setModel(sendedProxy);
+    ui->notSentTable->setModel(notSentProxy);
+    ui->sentTable->setModel(sentProxy);
 }
 
-void ManagerGui::unsendedDoubleClicked ( const QModelIndex & index ) {
-    //SLOT: Catches the double clicks from the unsended table.
+void ManagerGui::notSentDoubleClicked ( const QModelIndex & index ) {
+    //SLOT: Catches the double clicks from the notSent table.
 
-    QModelIndex realIndex = unsendedProxy->mapToSource(index);
+    QModelIndex realIndex = notSentProxy->mapToSource(index);
     Report *selectedReport = model->getReport(realIndex);
 
     ViewReport *viewReport = new ViewReport(selectedReport->getTextualDescription());
     viewReport->show();
 }
 
-void ManagerGui::sendedDoubleClicked ( const QModelIndex & index ) {
-    //SLOT: Catches the double clicks from the sended table.
+void ManagerGui::sentDoubleClicked ( const QModelIndex & index ) {
+    //SLOT: Catches the double clicks from the sent table.
 
-    QModelIndex realIndex = sendedProxy->mapToSource(index);
+    QModelIndex realIndex = sentProxy->mapToSource(index);
     Report *selectedReport = model->getReport(realIndex);
 
     ViewReport *viewReport = new ViewReport(selectedReport->getTextualDescription());
@@ -121,16 +121,16 @@ TablesModel* ManagerGui::getDataModel() {
     return model;
 }
 
-void ManagerGui::reportSended(Report* sendedReport) {
-    //SLOT: sets the "sended" flag of the just sended report and invalidates the proxy filter updating the tableviews.
+void ManagerGui::reportSent(Report* sentReport) {
+    //SLOT: sets the "sent" flag of the just sent report and invalidates the proxy filter updating the tableviews.
 
-    sendedReport->setSended(true);
+    sentReport->setSent(true);
 
     xml->save(); //The changes are saved on file.
 
     //Invalidation of proxies filter for tableview update.
-    unsendedProxy->invalidate();
-    sendedProxy->invalidate();
+    notSentProxy->invalidate();
+    sentProxy->invalidate();
 }
 
 

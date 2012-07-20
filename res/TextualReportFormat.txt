@@ -15,4 +15,4 @@ OpenGooDTS Report <uuid> generated on <date-time>
 <userDescription>
 
 -----------------------------------------------------
-Sended on <sendDate>
+Sent on <sendDate>

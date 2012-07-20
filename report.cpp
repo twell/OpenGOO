@@ -1,13 +1,13 @@
 #include "report.h"
 
-Report::Report(Architecture *arch, QUuid uuid, QDateTime dateTime, QString debugText, QString userText, bool sended, QDateTime sendDate, bool fixed, QString gameVerFix)
+Report::Report(Architecture *arch, QUuid uuid, QDateTime dateTime, QString debugText, QString userText, bool sent, QDateTime sendDate, bool fixed, QString gameVerFix)
 {
     this->arch = arch;
     this->uuid = uuid;
     this->dateTime = dateTime;
     this->debugText = debugText;
     this->userText = userText;
-    this->sended = sended;
+    this->sent = sent;
     this->sendDate = sendDate;
     this->fixed = fixed;
     this->gameVerFix = gameVerFix;
@@ -25,8 +25,8 @@ void Report::setFixed(bool fixed) {
     this->fixed = fixed;
 }
 
-void Report::setSended(bool sended) {
-    this->sended = sended;
+void Report::setSent(bool sent) {
+    this->sent = sent;
 }
 
       //------------------------------//
@@ -53,8 +53,8 @@ QString Report::getgameVerFix() const {
     return gameVerFix;
 }
 
-bool Report::getSended() const {
-    return sended;
+bool Report::getSent() const {
+    return sent;
 }
 
 QString Report::getDebugText() const {
@@ -66,7 +66,7 @@ QString Report::getUserText() const {
 }
 
 QString Report::getTextualDescription() {
-    //Generates the textual description that will be sended.
+    //Generates the textual description that will be sent.
 
     QString textualReport;
 
@@ -84,7 +84,7 @@ QString Report::getTextualDescription() {
                           + "-UserDescription=\n"
                           + getUserText()+"\n"
                           + "-----------------------------------------------------\n"
-                          + "Sended on " + sendDate.toString() + "\n");
+                          + "Sent on " + sendDate.toString() + "\n");
 
     return textualReport;
 }

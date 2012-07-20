@@ -5,10 +5,10 @@
 
 class CustomTableProxy : public QSortFilterProxyModel
 {
-    bool sended;
+    bool sent;
 
 public:
-    CustomTableProxy(bool sended); //The flag initializes the proxy class in sended table mode or unsended table mode.
+    CustomTableProxy(bool sent); //The flag initializes the proxy class in sent table mode or not sent table mode.
 
     bool filterAcceptsColumn ( int source_column, const QModelIndex & source_parent ) const; //Reimplemented.
     bool filterAcceptsRow ( int source_row, const QModelIndex & source_parent ) const;       //Reimplemented.

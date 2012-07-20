@@ -1,6 +1,6 @@
 <!DOCTYPE debugFile>
 <gameReports>
   <sysInfo os="*" architecture="*" build="*" gameVer="*" vga="*" driverVer="*" inUse="?">
-    <report uuid="*" date-time="*" debugOutput="*" userDescription="*" sended="?" sendDate="*" fixed="?" gameVerFix="*"/>
+    <report uuid="*" date-time="*" debugOutput="*" userDescription="*" sent="?" sendDate="*" fixed="?" gameVerFix="*"/>
   </sysInfo>
 </gameReports>

@@ -1,20 +1,20 @@
 #include "customtableproxy.h"
 
-CustomTableProxy::CustomTableProxy(bool sended)
+CustomTableProxy::CustomTableProxy(bool sent)
 {
-    this->sended = sended;
+    this->sent = sent;
 }
 
 bool CustomTableProxy::filterAcceptsColumn ( int source_column, const QModelIndex & source_parent ) const {
     //Filters the columns from the model.
 
     Q_UNUSED(source_parent);
-    if(sended == true) { //SendedTable Columns.
+    if(sent == true) { //SentTable Columns.
 
         if(source_column == 0 ||  source_column == 1 ||source_column == 2 || source_column == 3 || source_column == 4)
             return true;
 
-    } else { //UnsendedTable Columns.
+    } else { //NotSentTable Columns.
 
         if(source_column == 0 ||  source_column == 1)
             return true;
@@ -24,16 +24,16 @@ bool CustomTableProxy::filterAcceptsColumn ( int source_column, const QModelInde
 }
 
 bool CustomTableProxy::filterAcceptsRow ( int source_row, const QModelIndex & source_parent ) const {
-    //Filters the rows checking the sended column.
+    //Filters the rows checking the sent column.
 
     QModelIndex index = sourceModel()->index(source_row, 5, source_parent);
 
-    if(sended == true) { //SendedTable filter.
+    if(sent == true) { //SentTable filter.
 
         if(sourceModel()->data(index).toString().compare("true") == 0)
             return true;
 
-    } else { //UnsendedTable filter.
+    } else { //NotSentTable filter.
 
         if(sourceModel()->data(index).toString().compare("false") == 0)
             return true;

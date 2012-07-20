@@ -7,7 +7,7 @@ WizardMain::WizardMain(QUuid uuid, QWidget *parent) : //Launched by main.
 {
     init(parent);
 
-    connect(this, SIGNAL(reportSended(Report*)),this, SLOT(wizardReportSended(Report*)));
+    connect(this, SIGNAL(reportSent(Report*)),this, SLOT(wizardReportSent(Report*)));
 
     //Opens the xml file calling the XmlModule and loads the report with same uuid.
 
@@ -54,7 +54,7 @@ void WizardMain::init(QWidget *parent) {
 void WizardMain::accept() {
     //The wizard is accepted when the user clicks on finished.
 
-    emit reportSended(report);  //TODO: Move the emit line where the report is correctly sended!
+    emit reportSent(report);  //TODO: Move the emit line where the report is correctly sent!
     QWizard::accept();
 }
 
@@ -62,9 +62,9 @@ Report* WizardMain::getReport() {
     return report;
 }
 
-void WizardMain::wizardReportSended(Report* wizardSendedReport) {
-    //SLOT: sets the "sended" flag of the just sended report.
+void WizardMain::wizardReportSent(Report* wizardSentReport) {
+    //SLOT: sets the "sent" flag of the just sent report.
 
-    wizardSendedReport->setSended(true);
+    wizardSentReport->setSent(true);
     xml->save(); //The changes are saved on file.
 }

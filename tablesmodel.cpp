@@ -46,7 +46,7 @@ QVariant TablesModel::data(const QModelIndex &index, int role) const {
                 return report->getgameVerFix();
 
             case 5:
-                return report->getSended();
+                return report->getSent();
 
             default:
                 return QVariant();

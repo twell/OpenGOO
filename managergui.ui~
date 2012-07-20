@@ -208,7 +208,7 @@
    <sender>notSentTable</sender>
    <signal>doubleClicked(QModelIndex)</signal>
    <receiver>ManagerGui</receiver>
-   <slot>notSentDoubleClicked(QModelIndex)</slot>
+   <slot>unsendedDoubleClicked(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>248</x>
@@ -224,7 +224,7 @@
    <sender>sentTable</sender>
    <signal>doubleClicked(QModelIndex)</signal>
    <receiver>ManagerGui</receiver>
-   <slot>sentDoubleClicked(QModelIndex)</slot>
+   <slot>sendedDoubleClicked(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>355</x>
@@ -240,7 +240,7 @@
  <slots>
   <slot>sendReport()</slot>
   <slot>sendTextualReport()</slot>
-  <slot>notSentDoubleClicked(QModelIndex)</slot>
-  <slot>sentDoubleClicked(QModelIndex)</slot>
+  <slot>unsendedDoubleClicked(QModelIndex)</slot>
+  <slot>sendedDoubleClicked(QModelIndex)</slot>
  </slots>
 </ui>

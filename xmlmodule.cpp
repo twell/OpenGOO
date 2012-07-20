@@ -80,16 +80,16 @@ void XmlModule::load() {
                         QString userDescription = reportElement.attribute("userDescription");
                         QString sendDate = reportElement.attribute("sendDate");
                         QString gameVerFix = reportElement.attribute("gameVerFix");
-                        bool sended = QVariant(reportElement.attribute("sended")).toBool();
+                        bool sent = QVariant(reportElement.attribute("sent")).toBool();
                         bool fixed = QVariant(reportElement.attribute("fixed")).toBool();
 
                         if(!(uuid.isEmpty() && dateTime.isEmpty() && debugOutput.isEmpty() && userDescription.isEmpty() && sendDate.isEmpty())) {
 
 //                            Debug output:
 //                            qWarning() << "Os :" << arch->getOs();
-//                            qWarning() << uuid << dateTime << debugOutput << userDescription << sended << sendDate;
+//                            qWarning() << uuid << dateTime << debugOutput << userDescription << sent << sendDate;
 
-                            Report *report = new Report(arch, QUuid(uuid), QDateTime().fromString(dateTime), debugOutput, userDescription, QVariant(sended).toBool(), QDateTime().fromString(sendDate), QVariant(fixed).toBool(), QVariant(gameVerFix).toString());
+                            Report *report = new Report(arch, QUuid(uuid), QDateTime().fromString(dateTime), debugOutput, userDescription, QVariant(sent).toBool(), QDateTime().fromString(sendDate), QVariant(fixed).toBool(), QVariant(gameVerFix).toString());
                             reports->append(report);
                         }
 
@@ -157,7 +157,7 @@ void XmlModule::createXmlReport(QDomElement* cn, Report* report) {
     cn->setAttribute( "date-time", report->getDateTime().toString() );
     cn->setAttribute( "debugOutput", report->getDebugText() );
     cn->setAttribute( "userDescription", report->getUserText() );
-    cn->setAttribute( "sended", report->getSended() );
+    cn->setAttribute( "sent", report->getSent() );
     cn->setAttribute( "sendDate", report->getSendDate().toString() );
 }
 

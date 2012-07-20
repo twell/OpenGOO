@@ -1,38 +1,44 @@
 OpengooDebugSenderTool - OpenGooDst
 ======
 
-The english version will be available soon!
+ * [English](#english)
+ * [Italiano](#italian)
 
- * [Introduzione](#introduzione)
- * [Compilazione](#compilazione)
+<a id="english"></a>
+# English
 
-### <a id="introduzione"></a>
-##Introduzione 
-OpenGooDst è un modulo di OpenGoo che permette di inviare al momento del crash del gioco un report formato dal backtrace + debug output e una breve descrizione dell'utente su quanto svolgeva al momento del crash.
+ * [Preface](#preface)
+ * [Compilation](#compilation)
+ * [Contribute](#contribute)
 
-OpenGooDst è separato da OpenGoo ed è formato da un wizard di invio report e un piccolo manager, in grado di visualizzare tutti i report, inviati e non inviati. E' inoltre possibile inviare dal manager eventuali report non inviati e di avere un [feedback di risoluzione](#feedback) di un particolare bug.
+<a id="preface"></a>
+##Preface
 
-OpenGoo, al momento del crash, memorizza il backtrace e il debug output nel file [debug.xml](#debugFile), generando un identificatore univoco “Uuid” legato al report. Successivamente esegue OpenGooDst passandogli l'uuid come argomento.
+OpenGooDst is an OpenGoo module that allows users to send a bug report when the game crashes. The report will be filled with the backtrace + debug output text and a small description from the user about his steps.
 
-Il modulo di OpenGoo che apre il file di debug.xml e memorizza il report è sul branch denominato: “XML-Module”. Non appena concluso sarà inglobato nel gioco.
+OpenGooDst is indipendent from OpenGoo and is composed by a wizard and a little manager that shows all the reports, the sent and not sent. The user can also use the manager to send the not sent reports or to have feedback on the sent reports ([resolution feedback](#en_feedback))
 
-OpenGooDst viene localizzato all'avvio con la lingua impostata nel gioco, tra quelle che saranno disponibili.
+OpenGoo, when a crash occurs, stores the backtrace and the debug output in a file [debug.xml](#en_debug) and generates a unique identifier "Uuid" related to the report. Further it runs OpenGooDst passing the generated Uuid via arguments.
 
-La determinazione del percorso al file di configurazione del gioco, come molte altre informazioni di architettura sono demandate al modulo che installerà OpenGoo nel sistema.
+The OpenGoo module which opens the debug.xml file and stores the report is called on the branch "XML-Module". When finished it will be merged with the game code.
 
-Vi è il problema di come raccogliere queste informazioni sulle diverse architetture su cui OpenGoo sarà distribuito.
+OpenGooDst is localized on startup with the language set in the game config file.
 
-###L'avvio:
+How to detect the config file path, like a lot of other information, is delegated to the module which will install OpenGoo on the system.
 
-All'avvio OpenGooDst valuta i parametri per determinare in che modalità avviarsi:
+We need to design how to gather this information on different architectures.
 
-	-w -uuid=UUID_REPORT per wizard
-	-m per manager
+###The startup:
 
-In avvio in modalità wizard, OpenGooDst apre il file debug.xml in cerca del report identificato dall'uuid passato come argomento, lo completa delle informazioni inserite dall'utente e lo invia.
+On startup OpenGooDst checks the arguments to detect the wanted mode:
 
-### <a id="debugFile"></a>
-###La struttura del file xml:
+	-w -uuid=UUID_REPORT for the wizard mode.
+	-m for the manager mode.
+
+In wizard mode, OpenGooDst opens the debug.xml file and searches the report with the Uuid passed, then it fills the report with the information set by the user and sends it.
+
+<a id="en_debug"></a>
+###The xml file structure:
 
 
     <!DOCTYPE debugFile>
@@ -40,7 +46,7 @@ In avvio in modalità wizard, OpenGooDst apre il file debug.xml in cerca del rep
 
       <sysInfo os="*" architecture="*" build="*" gameVer="*" vga="*" driverVer="*" inUse="?">
     
-          <report uuid="*" date-time="*" debugOutput="*" userDescription="*" sended="?" sendDate="*" fixed="?" gameVerFix="*"/>
+          <report uuid="*" date-time="*" debugOutput="*" userDescription="*" sent="?" sendDate="*" fixed="?" gameVerFix="*"/>
 
     	 <report uuid=... />
 
@@ -56,16 +62,176 @@ In avvio in modalità wizard, OpenGooDst apre il file debug.xml in cerca del rep
 
     </gameReports>
 
-Gerarchicamente vi sono due nodi: L'architettura e il report.
+Hierarchically there are two nodes: the architecture and the report.
 
-L'Architettura: contiene tutte le informazioni strettamente architetturali, relative alla macchina su cui è installato i gioco e relative al gioco stesso (versione, num di build, vga, ecc.)
+The Architecture: contains all the information related to the architecture like the machine where OpenGoo runs and few information about the game (version number, build number, vga type, etc...).
+
+The Report: is a single bug report containing all the information about, like the backtrace and the debug text, the user description, the dateTime when it happened and overhead information.
+The report is hierarchically related to the architecture where it is contained.
+
+The debug.xml file is populated when a crash occured detecting the architecture in use. When the game is updated to a new version a new architecture is appended, and the new reports are tagged along this one.
+
+Before delve into each field we clarify that we want to implement the opportunity of provide [feedback](#en_feedback) to the user when a sent bug has been fixed. Additional fields are added for this purpose, like the version of the game where the bug is fixed.
+
+###The fields:
+
+Architecture:
+      
+    <sysInfo os="*" arch="*" build="*" gameVer="120" vga="*" driverVer="*" inUse="true">
+
+    </sysInfo>
+
+ * os = operating system in use.
+ * arch = numeric id of the architecture.
+ * build = numeric build of the game.
+ * gameVer = game version.
+ * vga = gpu model.
+ * driverVer = driver version of the gpu.
+ * inUse = flag that indicates the architecture in actual use.
+
+Report:
+
+    <report uuid="*" date-time="*" debugOutput="**--#dump" userDescription="Has crashed!" sent="false" sendDate="*" fixed="true" gameVerFix="*"/>
+
+ * uuid = unique identifier of the report.
+ * date-time = date/time when the crash occurs in UTC.
+ * debugOutput = backtrace and debug output.
+ * userDescription = user's textual description.
+ * sent = flag that indicates if the report is sent.
+ * sendDate = date/time of the sent report.
+ * fixed = flag that indicates if the report is fixed.
+ * gameVerFix = the game version where the report has fixed.
+
+###The textual report:
+
+The report format, sent by OpenGooDst, is generated from the information allocated:
+
+    OpenGooDTS Report uuid generated on dateTime
+    -----------------------------------------------------
+    -                    Architecture                   -
+    -----------------------------------------------------
+    - GameVer in Build
+    - Os on Arch with Vga, DriverVer
+    -----------------------------------------------------
+    -                     Report                        -
+    -----------------------------------------------------
+    -Tracer=
+    DebugText
+    -UserDescription=
+    UserText
+    -----------------------------------------------------
+    Sent on sendDate
+
+(Could change deeply)
+
+The report will be uploaded via ftp protocol. Actually we have no server for this purpose.
+
+<a id="en_feedback"></a>
+### Resolution feedback:
+(Actually not implemented)  
+The report is generated each time with a universal-unique identifier or with few chances of replica.
+When a bug has fixed, an xml file containing the report uuid + additional information is updated on the server.
+
+During the startup in manager mode, OpenGooDst downloads the xml file searching feedback news.
+
+Born the problem of handling in more efficient mode the reports. It is possible to design a different kind of textual reports.
+
+<a id="compilation"></a>
+##Compilation:
+
+To compile the qt libraries are required.
+Follow these statements.
+
+ * qmake
+ * make
+ 
+ * ./OpenGooDst
+
+Make sure the text.xml file is in the same directory of the binary and the program is launched with the right arguments.
+
+<a id="contribute"></a>
+##How to contribute:
+
+Soon different issues will be opened on github and you can take one or more of these tasks.
+This is a short list of todo tasks:
+
+ * Ftp upload code.
+ * qtLinguistic code.
+ * design of feedback file structure and related code.
+ * Xml-Module code.
+ * Two Goos artworks.
+
+Initial Idea and Design:  
+Fabrizio Signoretti - fasigno37@gmail.com  
+Under GPLv3
+
+
+<a id="italian"></a>
+# Italiano
+
+ * [Introduzione](#introduzione)
+ * [Compilazione](#compilazione)
+
+<a id="introduzione"></a>
+##Introduzione 
+OpenGooDst è un modulo di OpenGoo che permette di inviare al momento del crash del gioco un report formato dal backtrace + debug output e una breve descrizione dell'utente su quanto svolgeva al momento del crash.
+
+OpenGooDst è separato da OpenGoo ed è formato da un wizard di invio report e un piccolo manager, in grado di visualizzare tutti i report, inviati e non inviati. E' inoltre possibile inviare dal manager eventuali report non inviati e di avere un [feedback di risoluzione](#ita_feedback) di un particolare bug.
+
+OpenGoo, al momento del crash, memorizza il backtrace e il debug output nel file [debug.xml](#ita_debug), generando un identificatore univoco “Uuid” legato al report. Successivamente esegue OpenGooDst passandogli l'uuid come argomento.
+
+Il modulo di OpenGoo che apre il file di debug.xml e memorizza il report è sul branch denominato: “XML-Module”. Non appena concluso sarà inglobato nel gioco.
+
+OpenGooDst viene localizzato all'avvio con la lingua impostata nel gioco, tra quelle che saranno disponibili.
+
+La determinazione del percorso al file di configurazione del gioco, come molte altre informazioni di architettura, è demandata al modulo che installerà OpenGoo nel sistema.
+
+Vi è il problema di come raccogliere queste informazioni sulle diverse architetture su cui OpenGoo sarà distribuito.
+
+###L'avvio:
+
+All'avvio OpenGooDst valuta i parametri per determinare in che modalità avviarsi:
+
+	-w -uuid=UUID_REPORT per wizard
+	-m per manager
+
+In avvio in modalità wizard, OpenGooDst apre il file debug.xml in cerca del report identificato dall'uuid passato come argomento, lo completa delle informazioni inserite dall'utente e lo invia.
+
+<a id="ita_debug"></a>
+###La struttura del file xml:
+
+
+    <!DOCTYPE debugFile>
+    <gameReports>
+
+      <sysInfo os="*" architecture="*" build="*" gameVer="*" vga="*" driverVer="*" inUse="?">
+    
+          <report uuid="*" date-time="*" debugOutput="*" userDescription="*" sent="?" sendDate="*" fixed="?" gameVerFix="*"/>
+
+    	 <report uuid=... />
+
+               [...]
+
+      </sysInfo>
+
+      <sysInfo os="*"  ...
+
+           <report uuid=...
+
+      </sysInfo>
+
+    </gameReports>
+
+Gerarchicamente vi sono due nodi: l'architettura e il report.
+
+L'Architettura: contiene tutte le informazioni strettamente architetturali, relative alla macchina su cui è installato i gioco e relative al gioco stesso (versione, num di build, vga, ecc...)
 
 Il Report: è una singola segnalazione di un avvenuto bug, contenente tutte le informazioni a riguardo come il backtrace e il debug, la descrizione dell'utente, l'ora di avvenimento e informazioni di supporto.
 Il report è legato gerarchicamente all'architettura che lo contiene.
 
 Il file debug.xml viene popolato al momento del crash identificando l'architettura attualmente in uso. Quando il gioco viene aggiornato di versione, viene aggiunta una nuova architettura e i report verranno accodati a questa.
 
-Prima di entrare nel dettaglio dei singoli campi del file debug.xml è bene precisare che un obbiettivo che vogliamo raggiungere è la possibilità di segnalare all'utente che quel bug segnalatoci è stato risolto, indicando inoltre con quale versione del gioco. A questo proposito alcuni campi sono progettati a supporto di [questa funzionalità](#feedback di risoluzione).
+Prima di entrare nel dettaglio dei singoli campi del file debug.xml è bene precisare che un obbiettivo che vogliamo raggiungere è la possibilità di segnalare all'utente che quel bug segnalatoci è stato risolto, indicando inoltre con quale versione del gioco. A questo proposito alcuni campi sono progettati a supporto di [questa funzionalità](#ita_feedback).
 
 ###I campi:
 
@@ -85,13 +251,13 @@ Architettura:
 
 Report:
 
-    <report uuid="*" date-time="*" debugOutput="**--#dump" userDescription="Has crashed!" sended="false" sendDate="*" fixed="true" gameVerFix="*"/>
+    <report uuid="*" date-time="*" debugOutput="**--#dump" userDescription="Has crashed!" sent="false" sendDate="*" fixed="true" gameVerFix="*"/>
 
  * uuid= identificativo univoco del report.
  * date-time= data/ora di avvenuto crash in UTC.
  * debugOutput= testo di backtrace + debug.
  * userDescription= descrizione a parole dell'utente.
- * sended = flag che indica se il report è stato inviato in rete.
+ * sent = flag che indica se il report è stato inviato in rete.
  * sendDate = data/ora di invio in rete del report.
  * fixed= indica se il bug segnalato è stato risolto.
  * gameVerFix= indica la versione di gioco con cui è stato risolto il bug segnalato.
@@ -114,13 +280,13 @@ Il formato del report inviato è generato da OpenGooDst, sulla base delle inform
     -UserDescription=
     UserText
     -----------------------------------------------------
-    Sended on sendDate
+    Sent on sendDate
 
 (Potrà subire sostanziali modifiche)
 
 Il report verrà uplodato via ftp. Attualmente non abbiamo un server per lo scopo.
 
-### <a id="feedback"></a>
+<a id="ita_feedback"></a>
 ###Feedback di risoluzione:
 (Funzionalità attualmente non implementata)  
 Il report viene generato ogni volta con un uuid univoco universalmente o con poche probabilità di duplicato.
@@ -130,7 +296,7 @@ All'avvio del manager, OpenGooDst scarica il file .xml cercando eventuali feedba
 
 Sorge il problema di gestire in modo efficiente i reports. È possibile quindi progettare un diverso tipo di file di segnalazione, raggruppabile con altri e con un formato più manipolabile.  
 
-### <a id="compilazione"></a>
+<a id="compilazione"></a>
 ##Compilazione:
 
 Per compilare sono necessarie le librerie qt.  
@@ -138,6 +304,8 @@ Svolgere i seguenti comandi.
 
  * qmake
  * make
+ 
+ * ./OpenGooDst
 
 Assicurarsi che il file dimostrativo test.xml sia nella cartella insieme all'eseguibile e che il programma venga eseguito con gli opportuni argomenti.
 

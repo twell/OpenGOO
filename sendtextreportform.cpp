@@ -53,7 +53,7 @@ void SendTextReportForm::sendTextualReport() {
 
             guiPointer->getDataModel()->insertRows(report, 0, 1, QModelIndex());
 
-            emit reportSended(report);
+            emit reportSent(report);
 
             emit close();
 

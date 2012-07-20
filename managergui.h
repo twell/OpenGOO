@@ -40,17 +40,17 @@ private:
     XmlModule *xml;
 
     TablesModel *model;
-    CustomTableProxy *unsendedProxy;
-    CustomTableProxy *sendedProxy;
+    CustomTableProxy *notSentProxy;
+    CustomTableProxy *sentProxy;
 
 private slots:
     void sendReport();
     void sendTextualReport();
 
-    void unsendedDoubleClicked ( const QModelIndex & index );
-    void sendedDoubleClicked ( const QModelIndex & index );
+    void notSentDoubleClicked ( const QModelIndex & index );
+    void sentDoubleClicked ( const QModelIndex & index );
 
-    void reportSended(Report*);
+    void reportSent(Report*);
 };
 
 #endif // MANAGERGUI_H
